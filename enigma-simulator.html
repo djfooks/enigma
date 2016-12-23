@@ -1,13 +1,21 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
     <head>
+        <meta charset="utf-8">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
         <script type="text/javascript" src="enigma-utils.js"></script>
         <script type="text/javascript" src="enigma-reflector.js"></script>
         <script type="text/javascript" src="enigma-rotor.js"></script>
         <script type="text/javascript" src="enigma-simulator.js"></script>
     </head>
     <body>
+        <form>
+            <select id="rotor-setting-0"></select>
+            <select id="rotor-setting-1"></select>
+            <select id="rotor-setting-2"></select>
+        </form>
         <div>Type to see encryption:</div>
-        <font face="courier"><div id="divID"></div></font>
+        <font face="courier"><div id="outputText"></div></font>
         <button onclick="reset()">Reset</button>
     </body>
 </html>

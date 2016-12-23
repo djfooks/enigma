@@ -69,7 +69,7 @@ function onKeyPress(event)
     Globals.enigmaSimulator.setRotorPositions("AAA");
     Globals.cypherText = Globals.enigmaSimulator.encryptMessage(Globals.plainText);
     
-    var div = document.getElementById('divID');
+    var div = document.getElementById('outputText');
     div.innerHTML = addSpaces(Globals.plainText, 5) + "<p>" + addSpaces(Globals.cypherText, 5);
 }
 
@@ -87,11 +87,31 @@ function reset()
     Globals.cypherText = "";
 }
 
+function setupRotorDropdown(index)
+{
+    var rotorSettingSelector = $("#rotor-setting-" + index);
+    var i;
+    for (i = 0; i < 26; i += 1)
+    {
+        var letter = codeToLetter(i);
+        rotorSettingSelector.append($('<option>', {
+            value: i,
+            text: letter
+        }));
+    }
+}
+
 function main()
 {
+    setupRotorDropdown(0);
+    setupRotorDropdown(1);
+    setupRotorDropdown(2);
+
     reset();
     document.onkeypress = onKeyPress;
 }
 
-main();
+$(document).ready(function() {
+    main();
+});
 
