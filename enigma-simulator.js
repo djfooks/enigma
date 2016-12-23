@@ -13,6 +13,7 @@ function EnigmaRotor(mappingString)
 {
     this.substitution = new Array(26);
     this.inverseSubstitution = new Array(26);
+    this.position = 0;
 
     var letter;
     var substitutionLetter;
@@ -25,14 +26,19 @@ function EnigmaRotor(mappingString)
     }
 }
 
-EnigmaSimulator.prototype.forward = function forward(letterCode)
+EnigmaRotor.prototype.update = function update()
 {
-    return this.substitution[letterCode];
+    this.position = (this.position + 1) % 26;
 };
 
-EnigmaSimulator.prototype.backward = function backward(letterCode)
+EnigmaRotor.prototype.forward = function forward(letterCode)
 {
-    return this.inverseSubstitution[letterCode];
+    return (this.substitution[(letterCode + this.position) % 26] - this.position + 26) % 26;
+};
+
+EnigmaRotor.prototype.backward = function backward(letterCode)
+{
+    return (this.inverseSubstitution[(letterCode + this.position) % 26] - this.position + 26) % 26;
 };
 
 function EnigmaSimulator(rotorSet, reflector)
@@ -44,25 +50,56 @@ function EnigmaSimulator(rotorSet, reflector)
 
 EnigmaSimulator.prototype.encryptLetter = function encryptLetter(letter)
 {
-    var currentCode = codeToLetter(letter);
+    var currentCode = letterToCode(letter);
+    console.log(letter);
 
     var i;
-    var rotorSetLength = this.rotorSet.length();
+    var rotorSetLength = this.rotorSet.length;
+    this.rotorSet[0].update();
     for (i = 0; i < rotorSetLength; i += 1)
     {
-
+        var rotor = this.rotorSet[i];
+        currentCode = rotor.forward(currentCode);
+        console.log(codeToLetter(currentCode));
     }
-    return letter;
+    currentCode = this.reflector.forward(currentCode);
+    console.log(codeToLetter(currentCode));
+    for (i = rotorSetLength - 1; i >= 0; i -= 1)
+    {
+        var rotor = this.rotorSet[i];
+        currentCode = rotor.backward(currentCode);
+        console.log(codeToLetter(currentCode));
+    }
+    return codeToLetter(currentCode);
 };
 
-var rotorI   = new EnigmaRotor("EKMFLGDQVZNTOWYHXUSPAIBRCJ");
-var rotorII  = new EnigmaRotor("AJDKSIRUXBLHWTMCQGZNPYFVOE");
-var rotorIII = new EnigmaRotor("BDFHJLCPRTXVZNYEIWGAKMUSQO");
 
-var rotorSet = [rotorI, rotorII, rotorIII];
-var reflectorA = new EnigmaRotor("EJMZALYXVBWFCRQUONTSPIKHGD");
+EnigmaSimulator.prototype.encryptMessage = function encryptMessage(plainText)
+{
+    var cypherText = "";
+    var plainTextLength = plainText.length;
+    var i;
+    for (i = 0; i < plainTextLength; i += 1)
+    {
+        cypherText += this.encryptLetter(plainText[i]);
+    }
+    return cypherText;
+};
 
-var enigmaSimulator = EnigmaSimulator(rotorSet, reflectorA);
-console.log(enigmaSimulator.encryptLetter("A"));
+function main()
+{
+    var rotorI   = new EnigmaRotor("EKMFLGDQVZNTOWYHXUSPAIBRCJ");
+    var rotorII  = new EnigmaRotor("AJDKSIRUXBLHWTMCQGZNPYFVOE");
+    var rotorIII = new EnigmaRotor("BDFHJLCPRTXVZNYEIWGAKMUSQO");
 
+    //rotorIII.update();
+
+    var rotorSet = [rotorIII, rotorII, rotorI];
+    var reflectorB = new EnigmaRotor("YRUHQSLDPXNGOKMIEBFZCWVJAT");
+
+    var enigmaSimulator = new EnigmaSimulator(rotorSet, reflectorB);
+    console.log(enigmaSimulator.encryptMessage("AAAAAA"));
+}
+
+main();
 
