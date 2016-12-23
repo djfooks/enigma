@@ -57,22 +57,27 @@ function onKeyPress(event)
     event = event || window.event;
     var charCode = event.keyCode || event.which;
     var charStr = String.fromCharCode(charCode);
-    
-    Globals.plainText += charStr.toUpperCase();
+    var letter = charStr.toUpperCase();
+
+    var code = letterToCode(letter);
+    if (code < 0 || code >= 26)
+    {
+        return;
+    }
+
+    Globals.plainText += letter;
     Globals.enigmaSimulator.setRotorPositions("AAA");
     Globals.cypherText = Globals.enigmaSimulator.encryptMessage(Globals.plainText);
     
     var div = document.getElementById('divID');
-    div.innerHTML = Globals.plainText + "<p>" + Globals.cypherText;
+    div.innerHTML = addSpaces(Globals.plainText, 5) + "<p>" + addSpaces(Globals.cypherText, 5);
 }
 
-function main()
+function reset()
 {
     var rotorI   = new EnigmaRotor("EKMFLGDQVZNTOWYHXUSPAIBRCJ");
     var rotorII  = new EnigmaRotor("AJDKSIRUXBLHWTMCQGZNPYFVOE");
     var rotorIII = new EnigmaRotor("BDFHJLCPRTXVZNYEIWGAKMUSQO");
-
-    //rotorIII.update();
 
     var rotorSet = [rotorIII, rotorII, rotorI];
     var reflectorB = new EnigmaReflector("YRUHQSLDPXNGOKMIEBFZCWVJAT");
@@ -80,7 +85,11 @@ function main()
     Globals.enigmaSimulator = new EnigmaSimulator(rotorSet, reflectorB);
     Globals.plainText = "";
     Globals.cypherText = "";
-    
+}
+
+function main()
+{
+    reset();
     document.onkeypress = onKeyPress;
 }
 
