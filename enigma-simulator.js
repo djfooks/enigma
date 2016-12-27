@@ -38,19 +38,25 @@ EnigmaSimulator.prototype.encryptLetter = function encryptLetter(letter)
 };
 
 
-EnigmaSimulator.prototype.encryptMessage = function encryptMessage(plainText)
+EnigmaSimulator.prototype.encryptMessage = function encryptMessage(plaintext)
 {
     var cypherText = "";
-    var plainTextLength = plainText.length;
+    var plaintextLength = plaintext.length;
     var i;
-    for (i = 0; i < plainTextLength; i += 1)
+    for (i = 0; i < plaintextLength; i += 1)
     {
-        cypherText += this.encryptLetter(plainText[i]);
+        cypherText += this.encryptLetter(plaintext[i]);
     }
     return cypherText;
 };
 
 var Globals = {};
+
+function updateOutputText()
+{
+    var div = document.getElementById('outputText');
+    div.innerHTML = addSpaces(Globals.plaintext, 5) + "<p>" + addSpaces(Globals.cyphertext, 5);
+}
 
 function onKeyPress(event)
 {
@@ -65,12 +71,26 @@ function onKeyPress(event)
         return;
     }
 
-    Globals.plainText += letter;
-    Globals.enigmaSimulator.setRotorPositions("AAA");
-    Globals.cypherText = Globals.enigmaSimulator.encryptMessage(Globals.plainText);
+    Globals.plaintext += letter;
+    Globals.cyphertext += Globals.enigmaSimulator.encryptLetter(letter);
     
-    var div = document.getElementById('outputText');
-    div.innerHTML = addSpaces(Globals.plainText, 5) + "<p>" + addSpaces(Globals.cypherText, 5);
+    updateOutputText();
+    updateRotorSettings();
+}
+
+function plaintextUpdate()
+{
+    var plaintext = $('#plaintext');
+    var plaintextLength = Globals.plaintext.length;
+    if (plaintextLength > 0)
+    {
+        plaintext.val(Globals.plaintext[Globals.plaintext.length - 1]);
+    }
+    else
+    {
+        plaintext.val("");
+    }
+    return false;
 }
 
 function reset()
@@ -83,8 +103,28 @@ function reset()
     var reflectorB = new EnigmaReflector("YRUHQSLDPXNGOKMIEBFZCWVJAT");
 
     Globals.enigmaSimulator = new EnigmaSimulator(rotorSet, reflectorB);
-    Globals.plainText = "";
-    Globals.cypherText = "";
+    Globals.enigmaSimulator.setRotorPositions("AAA");
+    Globals.plaintext = "";
+    Globals.cyphertext = "";
+
+    updateOutputText();
+    updateRotorSettings();
+    
+    var plaintext = $('#plaintext');
+    plaintext.val("");
+}
+
+function updateRotorSettings()
+{
+    var rotorSet = Globals.enigmaSimulator.rotorSet;
+    var rotorSettingSelector;
+    var i;
+    var rotorSetLength = rotorSet.length;
+    for (i = 0; i < rotorSetLength; i += 1)
+    {
+        rotorSettingSelector = $("#rotor-setting-" + i);
+        rotorSettingSelector.val(codeToLetter(rotorSet[i].position));
+    }
 }
 
 function setupRotorDropdown(index)
@@ -95,10 +135,18 @@ function setupRotorDropdown(index)
     {
         var letter = codeToLetter(i);
         rotorSettingSelector.append($('<option>', {
-            value: i,
+            value: letter,
             text: letter
         }));
     }
+}
+
+function rotorSettingChange(index)
+{
+    var rotorSettingSelector = $("#rotor-setting-" + index);
+    var position = rotorSettingSelector.val();
+    
+    Globals.enigmaSimulator.rotorSet[index].setPosition(position);
 }
 
 function main()

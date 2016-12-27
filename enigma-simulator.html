@@ -10,11 +10,14 @@
     </head>
     <body>
         <form>
-            <select id="rotor-setting-0"></select>
-            <select id="rotor-setting-1"></select>
-            <select id="rotor-setting-2"></select>
+            <select id="rotor-setting-2" onchange="rotorSettingChange(2)"></select>
+            <select id="rotor-setting-1" onchange="rotorSettingChange(1)"></select>
+            <select id="rotor-setting-0" onchange="rotorSettingChange(0)"></select>
         </form>
         <div>Type to see encryption:</div>
+        <form>
+        <input id="plaintext" type="text" onkeydown="plaintextUpdate()" onkeyup="plaintextUpdate()" maxlength="1">
+        </form>
         <font face="courier"><div id="outputText"></div></font>
         <button onclick="reset()">Reset</button>
     </body>
