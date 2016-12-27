@@ -58,12 +58,9 @@ function updateOutputText()
     div.innerHTML = addSpaces(Globals.plaintext, 5) + "<p>" + addSpaces(Globals.cyphertext, 5);
 }
 
-function onKeyPress(event)
+function onKeyPress(letter)
 {
-    event = event || window.event;
-    var charCode = event.keyCode || event.which;
-    var charStr = String.fromCharCode(charCode);
-    var letter = charStr.toUpperCase();
+    letter = letter.toUpperCase();
 
     var code = letterToCode(letter);
     if (code < 0 || code >= 26)
@@ -78,10 +75,16 @@ function onKeyPress(event)
     updateRotorSettings();
 }
 
-function plaintextUpdateDown()
+function plaintextUpdate()
 {
-    var plaintext = $('#plaintext');
-    plaintext.val("");
+    var plaintextTextbox = $('#plaintext');
+    var plaintextInput = plaintextTextbox.val();
+    if (plaintextInput.length > 0)
+    {
+        var newLetter = plaintextInput[plaintextInput.length - 1];
+        onKeyPress(newLetter);
+        plaintextTextbox.val(newLetter);
+    }
 }
 
 function reset()
@@ -129,6 +132,7 @@ function setupRotorDropdown(index)
             value: letter,
             text: letter
         }));
+        rotorSettingSelector.change(rotorSettingChange.bind(null, index));
     }
 }
 
@@ -145,9 +149,11 @@ function main()
     setupRotorDropdown(0);
     setupRotorDropdown(1);
     setupRotorDropdown(2);
+    
+    var plaintext = $('#plaintext');
+    plaintext.on("input", plaintextUpdate);
 
     reset();
-    document.onkeypress = onKeyPress;
 }
 
 $(document).ready(function() {
