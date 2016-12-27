@@ -78,19 +78,10 @@ function onKeyPress(event)
     updateRotorSettings();
 }
 
-function plaintextUpdate()
+function plaintextUpdateDown()
 {
     var plaintext = $('#plaintext');
-    var plaintextLength = Globals.plaintext.length;
-    if (plaintextLength > 0)
-    {
-        plaintext.val(Globals.plaintext[Globals.plaintext.length - 1]);
-    }
-    else
-    {
-        plaintext.val("");
-    }
-    return false;
+    plaintext.val("");
 }
 
 function reset()

@@ -16,7 +16,7 @@
         </form>
         <div>Type to see encryption:</div>
         <form>
-        <input id="plaintext" type="text" onkeydown="plaintextUpdate()" onkeyup="plaintextUpdate()" maxlength="1">
+        <input id="plaintext" type="text" style="text-transform:uppercase" onkeydown="plaintextUpdateDown()">
         </form>
         <font face="courier"><div id="outputText"></div></font>
         <button onclick="reset()">Reset</button>
