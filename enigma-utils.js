@@ -48,11 +48,13 @@ function getOffset(position)
     return "";
 }
 
+var highlightColors = ["blue", "red"];
 function highlight(str, positions)
 {
     var result = "";
     var i;
     var j;
+    var color;
     for (i = 0; i < str.length; i += 1)
     {
         var match = false;
@@ -60,13 +62,14 @@ function highlight(str, positions)
         {
             if (i == positions[j])
             {
+                color = highlightColors[j];
                 match = true;
                 break;
             }
         }
         if (match)
         {
-            result += "<b>" + str[i] + "</b>";
+            result += "<b><font color=\"" + color + "\">" + str[i] + "</font></b>";
         }
         else
         {
