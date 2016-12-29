@@ -22,7 +22,14 @@ EnigmaSimulator.prototype.encryptLetter = function encryptLetter(letter)
 
     var i;
     var rotorSetLength = this.rotorSet.length;
-    this.rotorSet[0].update();
+    for (i = 0; i < rotorSetLength; i += 1)
+    {
+        var hitNotch = this.rotorSet[i].update();
+        if (!hitNotch)
+        {
+            break;
+        }
+    }
     var rotor;
     for (i = 0; i < rotorSetLength; i += 1)
     {
@@ -90,9 +97,9 @@ function plaintextUpdate()
 
 function reset()
 {
-    var rotorI   = new EnigmaRotor("EKMFLGDQVZNTOWYHXUSPAIBRCJ");
-    var rotorII  = new EnigmaRotor("AJDKSIRUXBLHWTMCQGZNPYFVOE");
-    var rotorIII = new EnigmaRotor("BDFHJLCPRTXVZNYEIWGAKMUSQO");
+    var rotorI   = new EnigmaRotor("EKMFLGDQVZNTOWYHXUSPAIBRCJ", "R");
+    var rotorII  = new EnigmaRotor("AJDKSIRUXBLHWTMCQGZNPYFVOE", "F");
+    var rotorIII = new EnigmaRotor("BDFHJLCPRTXVZNYEIWGAKMUSQO", "W");
 
     var rotorSet = [rotorIII, rotorII, rotorI];
     var reflectorB = new EnigmaReflector("YRUHQSLDPXNGOKMIEBFZCWVJAT");

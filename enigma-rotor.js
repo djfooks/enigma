@@ -1,9 +1,10 @@
 
-function EnigmaRotor(mappingString)
+function EnigmaRotor(mappingString, notchLetter)
 {
     this.substitution = new Array(26);
     this.inverseSubstitution = new Array(26);
     this.position = 0;
+    this.notch = letterToCode(notchLetter);
 
     var letter;
     var i;
@@ -23,6 +24,7 @@ EnigmaRotor.prototype.setPosition = function setPosition(letter)
 EnigmaRotor.prototype.update = function update()
 {
     this.position = (this.position + 1) % 26;
+    return (this.position == this.notch);
 };
 
 EnigmaRotor.prototype.forward = function forward(letterCode)
