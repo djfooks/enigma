@@ -12,7 +12,7 @@ function EnigmaReflector(mappingString)
         this.substitution[i] = letterCode;
         inverseSubstitution[letterCode] = i;
     }
-    
+
     for (i = 0; i < 26; i += 1)
     {
         if (this.substitution[i] != inverseSubstitution[i])
@@ -25,5 +25,16 @@ function EnigmaReflector(mappingString)
 EnigmaReflector.prototype.forward = function forward(letterCode)
 {
     return this.substitution[letterCode];
+};
+
+EnigmaReflector.prototype.getSubstitution = function getSubstitution()
+{
+    var i;
+    var result = "";
+    for (i = 0; i < 26; i += 1)
+    {
+        result += codeToLetter(this.substitution[i]);
+    }
+    return result;
 };
 

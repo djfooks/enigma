@@ -64,6 +64,23 @@ function updateOutputText()
 {
     var div = document.getElementById('outputText');
     div.innerHTML = addSpaces(Globals.plaintext, 5) + "<p>" + addSpaces(Globals.cyphertext, 5);
+
+    var rotorDisplay = $("#rotorDisplay");
+    var rotorDisplayText = "";
+    var enigmaSimulator = Globals.enigmaSimulator;
+    var rotorSet = enigmaSimulator.rotorSet;
+    var rotorSetLength = rotorSet.length;
+    var i;
+    for (i = 0; i < rotorSetLength; i += 1)
+    {
+        rotorDisplayText += "ABCDEFGHIJKLMNOPQRSTUVWXYZ<p>";
+        rotorDisplayText += rotorSet[i].getWiringOffset() + "<p>";
+        rotorDisplayText += rotorSet[i].getSubstitution() + "<p>";
+    }
+
+    rotorDisplayText += "ABCDEFGHIJKLMNOPQRSTUVWXYZ<p>";
+    rotorDisplayText += enigmaSimulator.reflector.getSubstitution();
+    rotorDisplay.html(rotorDisplayText);
 }
 
 function onKeyPress(letter)

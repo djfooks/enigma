@@ -37,3 +37,27 @@ EnigmaRotor.prototype.backward = function backward(letterCode)
     return (this.inverseSubstitution[(letterCode + this.position) % 26] - this.position + 26) % 26;
 };
 
+// does not include the offset due to the rotation
+EnigmaRotor.prototype.getWiringOffset = function getWiringOffset()
+{
+    var i;
+    var result = "";
+    for (i = 0; i < 26; i += 1)
+    {
+        result += codeToLetter(this.substitution[(i + this.position) % 26]);
+    }
+    return result;
+};
+
+EnigmaRotor.prototype.getSubstitution = function getSubstitution()
+{
+    var i;
+    var result = "";
+    for (i = 0; i < 26; i += 1)
+    {
+        result += codeToLetter((this.substitution[(i + this.position) % 26] - this.position + 26) % 26);
+    }
+    return result;
+};
+
+
