@@ -76,7 +76,7 @@ function updateOutputText()
         return;
     }
 
-    var rotorDisplayText = "";
+    var rotorDisplayText = "<hr>";
     var enigmaSimulator = Globals.enigmaSimulator;
     var rotorSet = enigmaSimulator.rotorSet;
     var rotorSetLength = rotorSet.length;
@@ -95,16 +95,17 @@ function updateOutputText()
             highlights[0] = enigmaSimulator.rotorSetIn[i - 1];
             highlights[1] = enigmaSimulator.rotorSetOut[i - 1];
         }
-        rotorDisplayText += highlight("ABCDEFGHIJKLMNOPQRSTUVWXYZ<p>", highlights);
-        rotorDisplayText += highlight(rotor.getWiringOffset() + "<p>", highlights);
-        rotorDisplayText += highlight(rotor.getSubstitution() + " " + getOffset(-rotor.position) + "<p>", highlights);
+        rotorDisplayText += highlight("ABCDEFGHIJKLMNOPQRSTUVWXYZ Rotor \"" + rotor.name + "\"<p>", highlights);
+        rotorDisplayText += highlight(rotor.getWiringOffset() + " Wiring<p>", highlights);
+        rotorDisplayText += highlight(rotor.getSubstitution() + " Output " + getOffset(-rotor.position) + "<p>", highlights);
+        rotorDisplayText += "<hr>";
     }
 
     highlights[0] = enigmaSimulator.rotorSetIn[rotorSetLength - 1];
     highlights[1] = enigmaSimulator.rotorSetOut[rotorSetLength - 1];
-    rotorDisplayText += highlight("ABCDEFGHIJKLMNOPQRSTUVWXYZ<p>", highlights);
+    rotorDisplayText += highlight("ABCDEFGHIJKLMNOPQRSTUVWXYZ Reflector \"" + enigmaSimulator.reflector.name + "\"<p>", highlights);
     highlights[1] = undefined;
-    rotorDisplayText += highlight(enigmaSimulator.reflector.getSubstitution(), highlights);
+    rotorDisplayText += highlight(enigmaSimulator.reflector.getSubstitution() + " Output", highlights);
     rotorDisplay.html(rotorDisplayText);
 }
 
@@ -139,12 +140,12 @@ function plaintextUpdate()
 
 function reset()
 {
-    var rotorI   = new EnigmaRotor("EKMFLGDQVZNTOWYHXUSPAIBRCJ", "R");
-    var rotorII  = new EnigmaRotor("AJDKSIRUXBLHWTMCQGZNPYFVOE", "F");
-    var rotorIII = new EnigmaRotor("BDFHJLCPRTXVZNYEIWGAKMUSQO", "W");
+    var rotorI   = new EnigmaRotor("I",   "EKMFLGDQVZNTOWYHXUSPAIBRCJ", "R");
+    var rotorII  = new EnigmaRotor("II",  "AJDKSIRUXBLHWTMCQGZNPYFVOE", "F");
+    var rotorIII = new EnigmaRotor("III", "BDFHJLCPRTXVZNYEIWGAKMUSQO", "W");
 
     var rotorSet = [rotorIII, rotorII, rotorI];
-    var reflectorB = new EnigmaReflector("YRUHQSLDPXNGOKMIEBFZCWVJAT");
+    var reflectorB = new EnigmaReflector("B", "YRUHQSLDPXNGOKMIEBFZCWVJAT");
 
     Globals.enigmaSimulator = new EnigmaSimulator(rotorSet, reflectorB);
     Globals.enigmaSimulator.setRotorPositions("AAA");

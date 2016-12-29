@@ -1,6 +1,7 @@
 
-function EnigmaReflector(mappingString)
+function EnigmaReflector(name, mappingString)
 {
+    this.name = name;
     this.substitution = new Array(26);
     var inverseSubstitution = new Array(26);
 

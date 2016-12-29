@@ -1,6 +1,7 @@
 
-function EnigmaRotor(mappingString, notchLetter)
+function EnigmaRotor(name, mappingString, notchLetter)
 {
+    this.name = name;
     this.substitution = new Array(26);
     this.inverseSubstitution = new Array(26);
     this.position = 0;
