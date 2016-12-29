@@ -73,9 +73,10 @@ function updateOutputText()
     var i;
     for (i = 0; i < rotorSetLength; i += 1)
     {
+        var rotor = rotorSet[i];
         rotorDisplayText += "ABCDEFGHIJKLMNOPQRSTUVWXYZ<p>";
-        rotorDisplayText += rotorSet[i].getWiringOffset() + "<p>";
-        rotorDisplayText += rotorSet[i].getSubstitution() + "<p>";
+        rotorDisplayText += rotor.getWiringOffset() + "<p>";
+        rotorDisplayText += rotor.getSubstitution() + " " + getOffset(-rotor.position) + "<p>";
     }
 
     rotorDisplayText += "ABCDEFGHIJKLMNOPQRSTUVWXYZ<p>";

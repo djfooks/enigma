@@ -26,3 +26,24 @@ function addSpaces(string, everyCount)
     }
     return result;
 }
+
+function getOffset(position)
+{
+    if (position > 13)
+    {
+        position -= 26;
+    }
+    if (position < -13)
+    {
+        position += 26;
+    }
+    if (position > 0)
+    {
+        return "+" + position;
+    }
+    else if (position < 0)
+    {
+        return position;
+    }
+    return "";
+}
