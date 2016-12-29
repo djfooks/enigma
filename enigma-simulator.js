@@ -2,6 +2,8 @@
 function EnigmaSimulator(rotorSet, reflector)
 {
     this.rotorSet = rotorSet;
+    this.rotorSetIn = new Array(rotorSet.length);
+    this.rotorSetOut = new Array(rotorSet.length);
     this.reflector = reflector;
     // TODO plugboard
 }
@@ -35,11 +37,13 @@ EnigmaSimulator.prototype.encryptLetter = function encryptLetter(letter)
     {
         rotor = this.rotorSet[i];
         currentCode = rotor.forward(currentCode);
+        this.rotorSetIn[i] = currentCode;
     }
     currentCode = this.reflector.forward(currentCode);
     for (i = rotorSetLength - 1; i >= 0; i -= 1)
     {
         rotor = this.rotorSet[i];
+        this.rotorSetOut[i] = currentCode;
         currentCode = rotor.backward(currentCode);
     }
     return codeToLetter(currentCode);
@@ -66,21 +70,41 @@ function updateOutputText()
     div.innerHTML = addSpaces(Globals.plaintext, 5) + "<p>" + addSpaces(Globals.cyphertext, 5);
 
     var rotorDisplay = $("#rotorDisplay");
+    if (Globals.plaintext.length == 0)
+    {
+        rotorDisplay.html("");
+        return;
+    }
+
     var rotorDisplayText = "";
     var enigmaSimulator = Globals.enigmaSimulator;
     var rotorSet = enigmaSimulator.rotorSet;
     var rotorSetLength = rotorSet.length;
+    var highlights = [0, 0];
     var i;
     for (i = 0; i < rotorSetLength; i += 1)
     {
         var rotor = rotorSet[i];
-        rotorDisplayText += "ABCDEFGHIJKLMNOPQRSTUVWXYZ<p>";
-        rotorDisplayText += rotor.getWiringOffset() + "<p>";
-        rotorDisplayText += rotor.getSubstitution() + " " + getOffset(-rotor.position) + "<p>";
+        if (i == 0)
+        {
+            highlights[0] = letterToCode(Globals.plaintext[Globals.plaintext.length - 1]);
+            highlights[1] = letterToCode(Globals.cyphertext[Globals.cyphertext.length - 1]);
+        }
+        else
+        {
+            highlights[0] = enigmaSimulator.rotorSetIn[i - 1];
+            highlights[1] = enigmaSimulator.rotorSetOut[i - 1];
+        }
+        rotorDisplayText += highlight("ABCDEFGHIJKLMNOPQRSTUVWXYZ<p>", highlights);
+        rotorDisplayText += highlight(rotor.getWiringOffset() + "<p>", highlights);
+        rotorDisplayText += highlight(rotor.getSubstitution() + " " + getOffset(-rotor.position) + "<p>", highlights);
     }
 
-    rotorDisplayText += "ABCDEFGHIJKLMNOPQRSTUVWXYZ<p>";
-    rotorDisplayText += enigmaSimulator.reflector.getSubstitution();
+    highlights[0] = enigmaSimulator.rotorSetIn[rotorSetLength - 1];
+    highlights[1] = enigmaSimulator.rotorSetOut[rotorSetLength - 1];
+    rotorDisplayText += highlight("ABCDEFGHIJKLMNOPQRSTUVWXYZ<p>", highlights);
+    highlights[1] = undefined;
+    rotorDisplayText += highlight(enigmaSimulator.reflector.getSubstitution(), highlights);
     rotorDisplay.html(rotorDisplayText);
 }
 

@@ -47,3 +47,31 @@ function getOffset(position)
     }
     return "";
 }
+
+function highlight(str, positions)
+{
+    var result = "";
+    var i;
+    var j;
+    for (i = 0; i < str.length; i += 1)
+    {
+        var match = false;
+        for (j = 0; j < positions.length; j += 1)
+        {
+            if (i == positions[j])
+            {
+                match = true;
+                break;
+            }
+        }
+        if (match)
+        {
+            result += "<b>" + str[i] + "</b>";
+        }
+        else
+        {
+            result += str[i];
+        }
+    }
+    return result;
+}
