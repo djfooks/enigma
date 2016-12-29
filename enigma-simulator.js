@@ -23,15 +23,16 @@ EnigmaSimulator.prototype.encryptLetter = function encryptLetter(letter)
     var i;
     var rotorSetLength = this.rotorSet.length;
     this.rotorSet[0].update();
+    var rotor;
     for (i = 0; i < rotorSetLength; i += 1)
     {
-        var rotor = this.rotorSet[i];
+        rotor = this.rotorSet[i];
         currentCode = rotor.forward(currentCode);
     }
     currentCode = this.reflector.forward(currentCode);
     for (i = rotorSetLength - 1; i >= 0; i -= 1)
     {
-        var rotor = this.rotorSet[i];
+        rotor = this.rotorSet[i];
         currentCode = rotor.backward(currentCode);
     }
     return codeToLetter(currentCode);
@@ -70,7 +71,7 @@ function onKeyPress(letter)
 
     Globals.plaintext += letter;
     Globals.cyphertext += Globals.enigmaSimulator.encryptLetter(letter);
-    
+
     updateOutputText();
     updateRotorSettings();
 }
@@ -83,7 +84,7 @@ function plaintextUpdate()
     {
         var newLetter = plaintextInput[plaintextInput.length - 1];
         onKeyPress(newLetter);
-        plaintextTextbox.val(newLetter);
+        plaintextTextbox.val("");
     }
 }
 
@@ -103,9 +104,9 @@ function reset()
 
     updateOutputText();
     updateRotorSettings();
-    
-    var plaintext = $('#plaintext');
-    plaintext.val("");
+
+    var plaintextTextbox = $('#plaintext');
+    plaintextTextbox.val("");
 }
 
 function updateRotorSettings()
@@ -140,16 +141,26 @@ function rotorSettingChange(index)
 {
     var rotorSettingSelector = $("#rotor-setting-" + index);
     var position = rotorSettingSelector.val();
-    
+
     Globals.enigmaSimulator.rotorSet[index].setPosition(position);
+}
+
+function onAppError(message, source, lineno, colno, error)
+{
+    var debugText = $("#debugText");
+    Globals.errorMsg += "<p>Error: " + source + ":" + lineno + " " + message;
+    debugText.html(Globals.errorMsg);
 }
 
 function main()
 {
+    Globals.errorMsg = "";
+    window.onerror = onAppError;
+
     setupRotorDropdown(0);
     setupRotorDropdown(1);
     setupRotorDropdown(2);
-    
+
     var plaintext = $('#plaintext');
     plaintext.on("input", plaintextUpdate);
 

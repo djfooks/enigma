@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <script type="text/javascript" src="jquery-3.1.1.min.js"></script>
         <script type="text/javascript" src="enigma-utils.js"></script>
         <script type="text/javascript" src="enigma-reflector.js"></script>
         <script type="text/javascript" src="enigma-rotor.js"></script>
@@ -16,9 +16,10 @@
         </form>
         <div>Type to see encryption:</div>
         <form>
-        <input id="plaintext" type="text" style="text-transform:uppercase">
+        <input id="plaintext" autofocus type="text" style="text-transform:uppercase">
         </form>
         <font face="courier"><div id="outputText"></div></font>
         <button onclick="reset()">Reset</button>
+        <p id="debugText"></p>
     </body>
 </html>
