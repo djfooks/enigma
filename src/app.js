@@ -1,24 +1,25 @@
-var Globals = {};
+var App = {};
 
 function updateOutputText()
 {
     var div = document.getElementById('outputText');
-    div.innerHTML = addSpaces(Globals.plaintext, 5) + "<p>" + addSpaces(Globals.cyphertext, 5);
+    div.innerHTML = EnigmaUtils.addSpaces(App.plaintext, 5) + "<p>" + EnigmaUtils.addSpaces(App.cyphertext, 5);
 
     var rotorDisplay = $("#rotorDisplay");
-    if (Globals.plaintext.length == 0)
+    if (App.plaintext.length == 0)
     {
         rotorDisplay.html("");
         return;
     }
 
-    var enigmaSimulator = Globals.enigmaSimulator;
+    var enigmaSimulator = App.enigmaSimulator;
     var rotorDisplayText = "<hr>";
     var highlights = [0, 0];
+    var highlight = ControllerUtils.highlight;
     var plugboard = enigmaSimulator.plugboard;
 
-    highlights[0] = letterToCode(Globals.plaintext[Globals.plaintext.length - 1]);
-    highlights[1] = letterToCode(Globals.cyphertext[Globals.cyphertext.length - 1]);
+    highlights[0] = EnigmaUtils.letterToCode(App.plaintext[App.plaintext.length - 1]);
+    highlights[1] = EnigmaUtils.letterToCode(App.cyphertext[App.cyphertext.length - 1]);
     rotorDisplayText += highlight("ABCDEFGHIJKLMNOPQRSTUVWXYZ Plugboard \"" + plugboard.pairs + "\"<p>", highlights);
     rotorDisplayText += highlight(plugboard.getSubstitution() + "<p>", highlights);
     rotorDisplayText += "<hr>";
@@ -41,7 +42,7 @@ function updateOutputText()
         }
         rotorDisplayText += highlight("ABCDEFGHIJKLMNOPQRSTUVWXYZ Rotor \"" + rotor.name + "\"<p>", highlights);
         rotorDisplayText += highlight(rotor.getWiringOffset() + " Wiring<p>", highlights);
-        rotorDisplayText += highlight(rotor.getSubstitution() + " Output " + getOffset(-rotor.position) + "<p>", highlights);
+        rotorDisplayText += highlight(rotor.getSubstitution() + " Output " + ControllerUtils.getOffset(-rotor.position) + "<p>", highlights);
         rotorDisplayText += "<hr>";
     }
 
@@ -57,14 +58,14 @@ function onKeyPress(letter)
 {
     letter = letter.toUpperCase();
 
-    var code = letterToCode(letter);
+    var code = EnigmaUtils.letterToCode(letter);
     if (code < 0 || code >= 26)
     {
         return;
     }
 
-    Globals.plaintext += letter;
-    Globals.cyphertext += Globals.enigmaSimulator.encryptLetter(letter);
+    App.plaintext += letter;
+    App.cyphertext += App.enigmaSimulator.encryptLetter(letter);
 
     updateOutputText();
     updateRotorSettings();
@@ -84,18 +85,18 @@ function plaintextUpdate()
 
 function reset()
 {
-    var rotorI   = new EnigmaRotor("I",   "EKMFLGDQVZNTOWYHXUSPAIBRCJ", "R");
-    var rotorII  = new EnigmaRotor("II",  "AJDKSIRUXBLHWTMCQGZNPYFVOE", "F");
-    var rotorIII = new EnigmaRotor("III", "BDFHJLCPRTXVZNYEIWGAKMUSQO", "W");
+    var rotorI   = EnigmaMachineSettings.createRotor("I");
+    var rotorII  = EnigmaMachineSettings.createRotor("II");
+    var rotorIII = EnigmaMachineSettings.createRotor("III");
 
-    var plugboard = new EnigmaPlugboard("CA DK EI PV JZ MY SX LQ TF RB");
+    var plugboard = new EnigmaPlugboard(""); //"CA DK EI PV JZ MY SX LQ TF RB");
     var rotorSet = [rotorIII, rotorII, rotorI];
-    var reflectorB = new EnigmaReflector("B", "YRUHQSLDPXNGOKMIEBFZCWVJAT");
+    var reflectorB = EnigmaMachineSettings.createReflector("B");
 
-    Globals.enigmaSimulator = new EnigmaSimulator(rotorSet, reflectorB, plugboard);
-    Globals.enigmaSimulator.setRotorPositions("AAA");
-    Globals.plaintext = "";
-    Globals.cyphertext = "";
+    App.enigmaSimulator = new EnigmaSimulator(rotorSet, reflectorB, plugboard);
+    App.enigmaSimulator.setRotorPositions("AAA");
+    App.plaintext = "";
+    App.cyphertext = "";
 
     updateOutputText();
     updateRotorSettings();
@@ -106,14 +107,14 @@ function reset()
 
 function updateRotorSettings()
 {
-    var rotorSet = Globals.enigmaSimulator.rotorSet;
+    var rotorSet = App.enigmaSimulator.rotorSet;
     var rotorSettingSelector;
     var i;
     var rotorSetLength = rotorSet.length;
     for (i = 0; i < rotorSetLength; i += 1)
     {
         rotorSettingSelector = $("#rotor-setting-" + i);
-        rotorSettingSelector.val(codeToLetter(rotorSet[i].position));
+        rotorSettingSelector.val(EnigmaUtils.codeToLetter(rotorSet[i].position));
     }
 }
 
@@ -123,7 +124,7 @@ function setupRotorDropdown(index)
     var i;
     for (i = 0; i < 26; i += 1)
     {
-        var letter = codeToLetter(i);
+        var letter = EnigmaUtils.codeToLetter(i);
         rotorSettingSelector.append($('<option>', {
             value: letter,
             text: letter
@@ -137,19 +138,19 @@ function rotorSettingChange(index)
     var rotorSettingSelector = $("#rotor-setting-" + index);
     var position = rotorSettingSelector.val();
 
-    Globals.enigmaSimulator.rotorSet[index].setPosition(position);
+    App.enigmaSimulator.rotorSet[index].setPosition(position);
 }
 
 function onAppError(message, source, lineno, colno, error)
 {
     var debugText = $("#debugText");
-    Globals.errorMsg += "<p>Error: " + source + ":" + lineno + " " + message;
-    debugText.html(Globals.errorMsg);
+    App.errorMsg += "<p>Error: " + source + ":" + lineno + " " + message;
+    debugText.html(App.errorMsg);
 }
 
 function main()
 {
-    Globals.errorMsg = "";
+    App.errorMsg = "";
     window.onerror = onAppError;
 
     setupRotorDropdown(0);

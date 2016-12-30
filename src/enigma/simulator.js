@@ -7,8 +7,8 @@ function EnigmaSimulator(rotorSet, reflector, plugboard)
 
     this.rotorSetIn = new Array(rotorSet.length);
     this.rotorSetOut = new Array(rotorSet.length);
-    this.plugboardIn = undefined;
-    this.plugboardOut = undefined;
+    this.plugboardIn = 0;
+    this.plugboardOut = 0;
 }
 
 EnigmaSimulator.prototype.setRotorPositions = function setRotorPositions(rotorPositions)
@@ -21,23 +21,14 @@ EnigmaSimulator.prototype.setRotorPositions = function setRotorPositions(rotorPo
     }
 };
 
-EnigmaSimulator.prototype.encryptLetter = function encryptLetter(letter)
+EnigmaSimulator.prototype.simulate = function simulate(letter)
 {
-    var currentCode = letterToCode(letter);
-
-    var i;
     var rotorSetLength = this.rotorSet.length;
-    for (i = 0; i < rotorSetLength; i += 1)
-    {
-        var hitNotch = this.rotorSet[i].update();
-        if (!hitNotch)
-        {
-            break;
-        }
-    }
+    var currentCode = EnigmaUtils.letterToCode(letter);
     currentCode = this.plugboard.forward(currentCode);
     this.plugboardIn = currentCode;
 
+    var i;
     var rotor;
     for (i = 0; i < rotorSetLength; i += 1)
     {
@@ -55,9 +46,25 @@ EnigmaSimulator.prototype.encryptLetter = function encryptLetter(letter)
 
     this.plugboardOut = currentCode;
     currentCode = this.plugboard.forward(currentCode);
-    return codeToLetter(currentCode);
+    return EnigmaUtils.codeToLetter(currentCode);
 };
 
+EnigmaSimulator.prototype.encryptLetter = function encryptLetter(letter)
+{
+
+    var i;
+    var rotorSetLength = this.rotorSet.length;
+    // TODO double step
+    for (i = 0; i < rotorSetLength; i += 1)
+    {
+        var hitNotch = this.rotorSet[i].update();
+        if (!hitNotch)
+        {
+            break;
+        }
+    }
+    return this.simulate(letter);
+};
 
 EnigmaSimulator.prototype.encryptMessage = function encryptMessage(plaintext)
 {

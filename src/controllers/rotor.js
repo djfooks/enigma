@@ -1,0 +1,5 @@
+
+function RotorController(div, rotor)
+{
+}
+

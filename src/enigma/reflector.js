@@ -9,7 +9,7 @@ function EnigmaReflector(name, mappingString)
     var i;
     for (i = 0; i < 26; i += 1)
     {
-        var letterCode = letterToCode(mappingString[i]);
+        var letterCode = EnigmaUtils.letterToCode(mappingString[i]);
         this.substitution[i] = letterCode;
         inverseSubstitution[letterCode] = i;
     }
@@ -34,7 +34,7 @@ EnigmaReflector.prototype.getSubstitution = function getSubstitution()
     var result = "";
     for (i = 0; i < 26; i += 1)
     {
-        result += codeToLetter(this.substitution[i]);
+        result += EnigmaUtils.codeToLetter(this.substitution[i]);
     }
     return result;
 };

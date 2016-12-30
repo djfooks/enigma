@@ -5,13 +5,13 @@ function EnigmaRotor(name, mappingString, notchLetter)
     this.substitution = new Array(26);
     this.inverseSubstitution = new Array(26);
     this.position = 0;
-    this.notch = letterToCode(notchLetter);
+    this.notch = EnigmaUtils.letterToCode(notchLetter);
 
     var letter;
     var i;
     for (i = 0; i < 26; i += 1)
     {
-        var letterCode = letterToCode(mappingString[i]);
+        var letterCode = EnigmaUtils.letterToCode(mappingString[i]);
         this.substitution[i] = letterCode;
         this.inverseSubstitution[letterCode] = i;
     }
@@ -19,7 +19,7 @@ function EnigmaRotor(name, mappingString, notchLetter)
 
 EnigmaRotor.prototype.setPosition = function setPosition(letter)
 {
-    this.position = letterToCode(letter);
+    this.position = EnigmaUtils.letterToCode(letter);
 };
 
 EnigmaRotor.prototype.update = function update()
@@ -45,7 +45,7 @@ EnigmaRotor.prototype.getWiringOffset = function getWiringOffset()
     var result = "";
     for (i = 0; i < 26; i += 1)
     {
-        result += codeToLetter(this.substitution[(i + this.position) % 26]);
+        result += EnigmaUtils.codeToLetter(this.substitution[(i + this.position) % 26]);
     }
     return result;
 };
@@ -56,7 +56,7 @@ EnigmaRotor.prototype.getSubstitution = function getSubstitution()
     var result = "";
     for (i = 0; i < 26; i += 1)
     {
-        result += codeToLetter((this.substitution[(i + this.position) % 26] - this.position + 26) % 26);
+        result += EnigmaUtils.codeToLetter((this.substitution[(i + this.position) % 26] - this.position + 26) % 26);
     }
     return result;
 };
