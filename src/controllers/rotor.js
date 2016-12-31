@@ -17,12 +17,26 @@ RotorController.prototype.render = function render()
     var output = Mustache.render(template, view);
     $("#rotor-" + index).html(output);
 
+    var rotorSelector = $("#rotor-name-" + index);
+    var rotorName;
+    var rotors = EnigmaMachineSettings.rotors;
+    for (rotorName in rotors)
+    {
+        if (rotors.hasOwnProperty(rotorName))
+        {
+            rotorSelector.append($('<option>', {
+                value: rotorName,
+                text: rotorName
+            }));
+        }
+    }
+
     var enigmaSimulator = this.enigmaSimulator;
     var rotor = enigmaSimulator.rotorSet[index];
+    rotorSelector.val(rotor.name);
+    rotorSelector.on("change", this.rotorChange.bind(this));
 
-    $("#rotor-name-" + index).html(rotor.name);
-
-    var rotorSettingSelector = $("#rotor-setting-" + index);
+    var rotorSettingSelector = $("#rotor-position-" + index);
     var i;
     for (i = 0; i < 26; i += 1)
     {
@@ -31,7 +45,7 @@ RotorController.prototype.render = function render()
             value: letter,
             text: letter
         }));
-        rotorSettingSelector.change(this.rotorSettingChange.bind(this));
+        rotorSettingSelector.on("change", this.rotorPositionChange.bind(this));
     }
 };
 
@@ -58,12 +72,19 @@ RotorController.prototype.update = function update()
     $("#rotor-wiring-"  + index).html(highlight(rotor.getWiringOffset(), highlights));
     $("#rotor-output-"  + index).html(highlight(rotor.getSubstitution(), highlights));
     $("#rotor-offset-"  + index).html(ControllerUtils.getOffset(-rotor.position));
-    $("#rotor-setting-" + index).val(EnigmaUtils.codeToLetter(rotor.position));
+    $("#rotor-position-" + index).val(EnigmaUtils.codeToLetter(rotor.position));
 };
 
-RotorController.prototype.rotorSettingChange = function rotorSettingChange()
+RotorController.prototype.rotorChange = function rotorChange()
 {
-    var position = $("#rotor-setting-" + this.index).val();
+    var rotorName = $("#rotor-name-" + this.index).val();
+    this.enigmaSimulator.rotorSet[this.index] = EnigmaMachineSettings.createRotor(rotorName);
+    this.app.settingsUpdate();
+};
+
+RotorController.prototype.rotorPositionChange = function rotorPositionChange()
+{
+    var position = $("#rotor-position-" + this.index).val();
     this.enigmaSimulator.rotorSet[this.index].setPosition(position);
     this.app.settingsUpdate();
-}
+};
