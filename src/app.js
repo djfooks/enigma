@@ -7,6 +7,9 @@ var App = function ()
     var i;
 
     $("#plaintext-input").on("input", this.plaintextUpdate.bind(this));
+    $("#peek-input").on("input", this.peekUpdate.bind(this));
+    $("#peek-input").val("A");
+
     $("#reset-all").on("click", this.resetAll.bind(this));
     $("#reset-message").on("click", this.resetMessage.bind(this));
     $("#plugboard-pairs").on("input", this.plugboardChange.bind(this));
@@ -82,6 +85,8 @@ App.prototype.updateSimulator = function updateSimulator()
     $("#reflector-input").html(highlight(ControllerUtils.alphabet, highlights));
     highlights[1] = undefined;
     $("#reflector-output").html(highlight(enigmaSimulator.reflector.getSubstitution(), highlights));
+
+    $("#peek-output").html(EnigmaUtils.codeToLetter(enigmaSimulator.outCode));
 };
 
 App.prototype.onKeyPress = function onKeyPress(letter)
@@ -93,6 +98,8 @@ App.prototype.onKeyPress = function onKeyPress(letter)
     {
         return;
     }
+
+    $("#peek-input").val(letter);
 
     this.plaintext += letter;
     this.cyphertext += this.enigmaSimulator.encryptLetter(letter);
@@ -109,6 +116,20 @@ App.prototype.plaintextUpdate = function plaintextUpdate()
         this.onKeyPress(newLetter);
         plaintextTextbox.val("");
     }
+};
+
+App.prototype.peekUpdate = function peekUpdate()
+{
+    var peekInput = $("#peek-input");
+
+    letter = peekInput.val().toUpperCase();
+
+    var code = EnigmaUtils.letterToCode(letter);
+    if (code < 0 || code >= 26)
+    {
+        peekInput.val("");
+    }
+    this.settingsUpdate();
 };
 
 App.prototype.reflectorChange = function reflectorChange()
@@ -128,12 +149,13 @@ App.prototype.plugboardChange = function plugboardChange()
 
 App.prototype.settingsUpdate = function settingsUpdate()
 {
-    var lastLetter = "A";
-    if (this.plaintext.length > 0)
+    var peekLetter = "A";
+    var peekInput = $("#peek-input").val().toUpperCase();
+    if (peekInput.length > 0)
     {
-        lastLetter = this.plaintext[this.plaintext.length - 1];
+        peekLetter = peekInput[0];
     }
-    this.enigmaSimulator.simulate(lastLetter);
+    this.enigmaSimulator.simulate(peekLetter);
     this.updateSimulator();
 };
 
