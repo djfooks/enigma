@@ -1,8 +1,10 @@
 
 function EnigmaPlugboard(pairs)
 {
+    pairs = pairs.trim();
     this.pairs = pairs;
     this.substitution = [];
+    this.valid = true;
 
     var i;
     for (i = 0; i < 26; i += 1)
@@ -14,17 +16,29 @@ function EnigmaPlugboard(pairs)
     {
         return;
     }
+
+    var lettersPlugged = {};
+
     var pairsArray = pairs.split(" ");
     for (i = 0; i < pairsArray.length; i += 1)
     {
         var pair = pairsArray[i].toUpperCase();
         if (pair.length != 2)
         {
+            this.valid = false;
             continue;
         }
 
         var a = EnigmaUtils.letterToCode(pair[0]);
         var b = EnigmaUtils.letterToCode(pair[1]);
+
+        if (lettersPlugged[a] || lettersPlugged[b] || a == b)
+        {
+            this.valid = false;
+            continue;
+        }
+        lettersPlugged[a] = true;
+        lettersPlugged[b] = true;
 
         this.substitution[a] = b;
         this.substitution[b] = a;

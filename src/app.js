@@ -146,6 +146,7 @@ App.prototype.plugboardChange = function plugboardChange()
 {
     var plugboardPairs = $("#plugboard-pairs").val();
     this.enigmaSimulator.plugboard = new EnigmaPlugboard(plugboardPairs);
+    $("#plugboard-pairs-valid").html(this.enigmaSimulator.plugboard.valid ? "" : "X");
     this.settingsUpdate();
 };
 
@@ -175,6 +176,7 @@ App.prototype.resetAll = function resetAll()
     this.enigmaSimulator.setRotorPositions("AAA");
     this.enigmaSimulator.plugboard = new EnigmaPlugboard("");
     $("#plugboard-pairs").val("");
+    $("#plugboard-pairs-valid").html("");
     this.resetMessage();
 };
 
@@ -193,8 +195,8 @@ App.prototype.randomize = function randomize()
     {
         plugboardPairs += plugboardShuffle[i] + plugboardShuffle[i + 1] + " ";
     }
-    $("#plugboard-pairs").val(plugboardPairs);
-    this.enigmaSimulator.plugboard = new EnigmaPlugboard(plugboardPairs);
+    $("#plugboard-pairs").val(plugboardPairs.trim());
+    this.plugboardChange();
 
     for (i = 0; i < this.enigmaSimulator.rotorSet.length; i += 1)
     {
@@ -205,8 +207,9 @@ App.prototype.randomize = function randomize()
         this.enigmaSimulator.rotorSet[i] = EnigmaMachineSettings.createRotor(rotorsShuffle[i]);
         this.enigmaSimulator.rotorSet[i].setPosition(letter);
     }
+
     $("#reflector-setting").val(reflectorShuffle[0]);
-    this.enigmaSimulator.reflector = EnigmaMachineSettings.createReflector(reflectorShuffle[0]);
+    this.reflectorChange();
 
     this.settingsUpdate();
 };
