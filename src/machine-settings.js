@@ -4,6 +4,10 @@ var EnigmaMachineSettings = function ()
 
 EnigmaMachineSettings.rotors =
 {
+    "ABC...": {
+        "wiring": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "notch": "Z"
+    },
     "I": {
         "wiring": "EKMFLGDQVZNTOWYHXUSPAIBRCJ",
         "notch": "R"
@@ -40,8 +44,6 @@ EnigmaMachineSettings.rotors =
 
 EnigmaMachineSettings.reflectors =
 {
-    "Beta": "LEYJVCNIXWPBQMDRTAKZGFUHOS",
-    "Gamma": "FSOKANUERHMBTIYCWLQPZXVGJD",
     "A": "EJMZALYXVBWFCRQUONTSPIKHGD",
     "B": "YRUHQSLDPXNGOKMIEBFZCWVJAT",
     "C": "FVPJIAOYEDRZXWGCTKUQSBNMHL",

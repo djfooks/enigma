@@ -1,30 +1,99 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
+        <title>Enigma simulator</title>
         <meta charset="utf-8">
-        <script type="text/javascript" src="src/jquery-3.1.1.min.js"></script>
-        <script type="text/javascript" src="src/enigma/utils.js"></script>
-        <script type="text/javascript" src="src/enigma/reflector.js"></script>
-        <script type="text/javascript" src="src/enigma/plugboard.js"></script>
-        <script type="text/javascript" src="src/enigma/rotor.js"></script>
-        <script type="text/javascript" src="src/enigma/simulator.js"></script>
-        <script type="text/javascript" src="src/app.js"></script>
-        <script type="text/javascript" src="src/machine-settings.js"></script>
-        <script type="text/javascript" src="src/controllers/utils.js"></script>
+
+        <script type="text/javascript" src="/src/enigma/utils.js"></script>
+        <script type="text/javascript" src="/src/enigma/reflector.js"></script>
+        <script type="text/javascript" src="/src/enigma/plugboard.js"></script>
+        <script type="text/javascript" src="/src/enigma/rotor.js"></script>
+        <script type="text/javascript" src="/src/enigma/simulator.js"></script>
+        <script type="text/javascript" src="/src/machine-settings.js"></script>
+        <script type="text/javascript" src="/src/controllers/utils.js"></script>
+        <script type="text/javascript" src="/src/controllers/rotor.js"></script>
+
+        <script type="text/javascript" src="/src/jquery-3.1.1.min.js"></script>
+        <script type="text/javascript" src="/src/mustache-2.3.0.min.js"></script>
+
+        <script type="text/javascript" src="/src/app.js"></script>
+
+        <script id="rotor_template" type="text/html">
+            <form>
+                <table border=0>
+                    <tr>
+                        <td><span id="rotor-input-{{index}}"></span></td>
+                        <td>Rotor <span id="rotor-name-{{index}}"></span></td>
+                    </tr>
+                    <tr>
+                        <td><span id="rotor-wiring-{{index}}"></span></td>
+                        <td><select id="rotor-setting-{{index}}"></select></td>
+                    </tr>
+                    <tr>
+                        <td><span id="rotor-output-{{index}}"></span></td>
+                        <td>Output <span id="rotor-offset-{{index}}"></span></td>
+                    </tr>
+                </table>
+            </form>
+        </script>
     </head>
     <body>
-        <form>
-            <select id="rotor-setting-2"></select>
-            <select id="rotor-setting-1"></select>
-            <select id="rotor-setting-0"></select>
-        </form>
-        <div>Type to see encryption:</div>
-        <form>
-        <input id="plaintext" autofocus type="text" style="text-transform:uppercase">
-        </form>
-        <font face="courier" size=1 id="outputText"></div></font>
-        <button onclick="reset()">Reset</button>
-        <font face="courier" size=1><div id="rotorDisplay"></div></font>
-        <p id="debugText"></p>
+        <font face="courier" size=3>
+            <div>Type to see encryption:</div>
+            <form>
+            <input id="plaintext-input" autofocus type="text" style="text-transform:uppercase">
+            </form>
+            <table border=0>
+                <tr>
+                    <td>Plaintext:</td>
+                    <td><span id="plaintext-message"></span></td>
+                </tr>
+                <tr>
+                    <td>Cyphertext:</td>
+                    <td><span id="cyphertext-message"></span></td>
+                </tr>
+            </table>
+            <hr>
+            <button id="reset-message">Reset Message</button>
+            <button id="reset-all">Reset All</button>
+            <hr>
+            <form>
+                <table border=0>
+                    <tr>
+                        <td><span id="plugboard-input"></span></td>
+                        <td>
+                            Plugboard pairs <input id="plugboard-pairs" type="text" style="text-transform:uppercase">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span id="plugboard-output"></span></td>
+                        <td></td>
+                    </tr>
+                </table>
+            </form>
+            <hr>
+            <div id="rotor-0"></div>
+            <hr>
+            <div id="rotor-1"></div>
+            <hr>
+            <div id="rotor-2"></div>
+            <hr>
+            <form>
+                <table border=0>
+                    <tr>
+                        <td><span id="reflector-input"></span></td>
+                        <td>
+                            Reflector <select id="reflector-setting"></select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span id="reflector-output"></span></td>
+                        <td></td>
+                    </tr>
+                </table>
+            </form>
+            <hr>
+            <div id="debugText"></div>
+        </font>
     </body>
 </html>

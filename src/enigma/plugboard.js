@@ -17,8 +17,14 @@ function EnigmaPlugboard(pairs)
     var pairsArray = pairs.split(" ");
     for (i = 0; i < pairsArray.length; i += 1)
     {
-        var a = EnigmaUtils.letterToCode(pairsArray[i][0]);
-        var b = EnigmaUtils.letterToCode(pairsArray[i][1]);
+        var pair = pairsArray[i].toUpperCase();
+        if (pair.length != 2)
+        {
+            continue;
+        }
+
+        var a = EnigmaUtils.letterToCode(pair[0]);
+        var b = EnigmaUtils.letterToCode(pair[1]);
 
         this.substitution[a] = b;
         this.substitution[b] = a;

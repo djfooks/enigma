@@ -1,6 +1,8 @@
 
 var ControllerUtils = {};
 
+ControllerUtils.alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
 ControllerUtils.getOffset = function getOffset(position)
 {
     if (position > 13)

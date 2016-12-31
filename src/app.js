@@ -1,60 +1,90 @@
-var App = {};
 
-function updateOutputText()
+var App = function ()
 {
-    var div = document.getElementById('outputText');
-    div.innerHTML = EnigmaUtils.addSpaces(App.plaintext, 5) + "<p>" + EnigmaUtils.addSpaces(App.cyphertext, 5);
+    this.errorMsg = "";
+    window.onerror = this.onError.bind(this);
 
-    var rotorDisplay = $("#rotorDisplay");
-    if (App.plaintext.length == 0)
+    var i;
+
+    $("#plaintext-input").on("input", this.plaintextUpdate.bind(this));
+    $("#reset-all").on("click", this.resetAll.bind(this));
+    $("#reset-message").on("click", this.resetMessage.bind(this));
+    $("#plugboard-pairs").on("input", this.plugboardChange.bind(this));
+
+    var reflectorSetting = $("#reflector-setting");
+    var reflectorName;
+    var reflectors = EnigmaMachineSettings.reflectors;
+    for (reflectorName in reflectors)
     {
-        rotorDisplay.html("");
-        return;
+        if (reflectors.hasOwnProperty(reflectorName))
+        {
+            reflectorSetting.append($('<option>', {
+                value: reflectorName,
+                text: reflectorName
+            }));
+        }
+    }
+    reflectorSetting.val("B");
+    reflectorSetting.change(this.reflectorChange.bind(this));
+
+    var rotorI   = EnigmaMachineSettings.createRotor("I");
+    var rotorII  = EnigmaMachineSettings.createRotor("II");
+    var rotorIII = EnigmaMachineSettings.createRotor("III");
+
+    var plugboard = new EnigmaPlugboard("");
+    var rotorSet = [rotorIII, rotorII, rotorI];
+    var reflectorB = EnigmaMachineSettings.createReflector("B");
+
+    var enigmaSimulator = new EnigmaSimulator(rotorSet, reflectorB, plugboard);
+    this.enigmaSimulator = enigmaSimulator;
+
+    this.rotorControllers = [];
+    for (i = 0; i < enigmaSimulator.rotorSet.length; i += 1)
+    {
+        this.rotorControllers[i] = new RotorController(this, i);
+        this.rotorControllers[i].render();
     }
 
-    var enigmaSimulator = App.enigmaSimulator;
-    var rotorDisplayText = "<hr>";
+    this.resetAll();
+};
+
+App.prototype.onError = function onError(message, source, lineno, colno, error)
+{
+    var debugText = $("#debugText");
+    this.errorMsg += "<p>Error: " + source + ":" + lineno + " " + message;
+    debugText.html(this.errorMsg);
+};
+
+App.prototype.updateSimulator = function updateSimulator()
+{
+    $("#plaintext-message").html(EnigmaUtils.addSpaces(this.plaintext, 5));
+    $("#cyphertext-message").html(EnigmaUtils.addSpaces(this.cyphertext, 5));
+
+    var i;
+    for (i = 0; i < this.rotorControllers.length; i += 1)
+    {
+        this.rotorControllers[i].update();
+    }
+
+    var enigmaSimulator = this.enigmaSimulator;
     var highlights = [0, 0];
     var highlight = ControllerUtils.highlight;
     var plugboard = enigmaSimulator.plugboard;
 
-    highlights[0] = EnigmaUtils.letterToCode(App.plaintext[App.plaintext.length - 1]);
-    highlights[1] = EnigmaUtils.letterToCode(App.cyphertext[App.cyphertext.length - 1]);
-    rotorDisplayText += highlight("ABCDEFGHIJKLMNOPQRSTUVWXYZ Plugboard \"" + plugboard.pairs + "\"<p>", highlights);
-    rotorDisplayText += highlight(plugboard.getSubstitution() + "<p>", highlights);
-    rotorDisplayText += "<hr>";
+    highlights[0] = enigmaSimulator.inCode;
+    highlights[1] = enigmaSimulator.outCode;
+    $("#plugboard-input").html(highlight(ControllerUtils.alphabet, highlights));
+    $("#plugboard-output").html(highlight(plugboard.getSubstitution(), highlights));
 
-    var rotorSet = enigmaSimulator.rotorSet;
-    var rotorSetLength = rotorSet.length;
-    var i;
-    for (i = 0; i < rotorSetLength; i += 1)
-    {
-        var rotor = rotorSet[i];
-        if (i == 0)
-        {
-            highlights[0] = enigmaSimulator.plugboardIn;
-            highlights[1] = enigmaSimulator.plugboardOut;
-        }
-        else
-        {
-            highlights[0] = enigmaSimulator.rotorSetIn[i - 1];
-            highlights[1] = enigmaSimulator.rotorSetOut[i - 1];
-        }
-        rotorDisplayText += highlight("ABCDEFGHIJKLMNOPQRSTUVWXYZ Rotor \"" + rotor.name + "\"<p>", highlights);
-        rotorDisplayText += highlight(rotor.getWiringOffset() + " Wiring<p>", highlights);
-        rotorDisplayText += highlight(rotor.getSubstitution() + " Output " + ControllerUtils.getOffset(-rotor.position) + "<p>", highlights);
-        rotorDisplayText += "<hr>";
-    }
-
-    highlights[0] = enigmaSimulator.rotorSetIn[rotorSetLength - 1];
-    highlights[1] = enigmaSimulator.rotorSetOut[rotorSetLength - 1];
-    rotorDisplayText += highlight("ABCDEFGHIJKLMNOPQRSTUVWXYZ Reflector \"" + enigmaSimulator.reflector.name + "\"<p>", highlights);
+    var rotorSetLength = enigmaSimulator.rotorSet.length;
+    highlights[0] = enigmaSimulator.inRotorSet[rotorSetLength - 1];
+    highlights[1] = enigmaSimulator.outRotorSet[rotorSetLength - 1];
+    $("#reflector-input").html(highlight(ControllerUtils.alphabet, highlights));
     highlights[1] = undefined;
-    rotorDisplayText += highlight(enigmaSimulator.reflector.getSubstitution() + " Output", highlights);
-    rotorDisplay.html(rotorDisplayText);
-}
+    $("#reflector-output").html(highlight(enigmaSimulator.reflector.getSubstitution(), highlights));
+};
 
-function onKeyPress(letter)
+App.prototype.onKeyPress = function onKeyPress(letter)
 {
     letter = letter.toUpperCase();
 
@@ -64,105 +94,67 @@ function onKeyPress(letter)
         return;
     }
 
-    App.plaintext += letter;
-    App.cyphertext += App.enigmaSimulator.encryptLetter(letter);
+    this.plaintext += letter;
+    this.cyphertext += this.enigmaSimulator.encryptLetter(letter);
+    this.updateSimulator();
+};
 
-    updateOutputText();
-    updateRotorSettings();
-}
-
-function plaintextUpdate()
+App.prototype.plaintextUpdate = function plaintextUpdate()
 {
-    var plaintextTextbox = $('#plaintext');
+    var plaintextTextbox = $("#plaintext-input");
     var plaintextInput = plaintextTextbox.val();
     if (plaintextInput.length > 0)
     {
         var newLetter = plaintextInput[plaintextInput.length - 1];
-        onKeyPress(newLetter);
+        this.onKeyPress(newLetter);
         plaintextTextbox.val("");
     }
-}
+};
 
-function reset()
+App.prototype.reflectorChange = function reflectorChange()
 {
-    var rotorI   = EnigmaMachineSettings.createRotor("I");
-    var rotorII  = EnigmaMachineSettings.createRotor("II");
-    var rotorIII = EnigmaMachineSettings.createRotor("III");
+    var reflectorName = $("#reflector-setting").val();
+    this.enigmaSimulator.reflector = EnigmaMachineSettings.createReflector(reflectorName);
+    this.settingsUpdate();
+};
 
-    var plugboard = new EnigmaPlugboard(""); //"CA DK EI PV JZ MY SX LQ TF RB");
-    var rotorSet = [rotorIII, rotorII, rotorI];
-    var reflectorB = EnigmaMachineSettings.createReflector("B");
 
-    App.enigmaSimulator = new EnigmaSimulator(rotorSet, reflectorB, plugboard);
-    App.enigmaSimulator.setRotorPositions("AAA");
-    App.plaintext = "";
-    App.cyphertext = "";
-
-    updateOutputText();
-    updateRotorSettings();
-
-    var plaintextTextbox = $('#plaintext');
-    plaintextTextbox.val("");
-}
-
-function updateRotorSettings()
+App.prototype.plugboardChange = function plugboardChange()
 {
-    var rotorSet = App.enigmaSimulator.rotorSet;
-    var rotorSettingSelector;
-    var i;
-    var rotorSetLength = rotorSet.length;
-    for (i = 0; i < rotorSetLength; i += 1)
+    var plugboardPairs = $("#plugboard-pairs").val();
+    this.enigmaSimulator.plugboard = new EnigmaPlugboard(plugboardPairs);
+    this.settingsUpdate();
+};
+
+App.prototype.settingsUpdate = function settingsUpdate()
+{
+    var lastLetter = "A";
+    if (this.plaintext.length > 0)
     {
-        rotorSettingSelector = $("#rotor-setting-" + i);
-        rotorSettingSelector.val(EnigmaUtils.codeToLetter(rotorSet[i].position));
+        lastLetter = this.plaintext[this.plaintext.length - 1];
     }
-}
+    this.enigmaSimulator.simulate(lastLetter);
+    this.updateSimulator();
+};
 
-function setupRotorDropdown(index)
+App.prototype.resetMessage = function resetMessage()
 {
-    var rotorSettingSelector = $("#rotor-setting-" + index);
-    var i;
-    for (i = 0; i < 26; i += 1)
-    {
-        var letter = EnigmaUtils.codeToLetter(i);
-        rotorSettingSelector.append($('<option>', {
-            value: letter,
-            text: letter
-        }));
-        rotorSettingSelector.change(rotorSettingChange.bind(null, index));
-    }
-}
+    this.plaintext = "";
+    this.cyphertext = "";
 
-function rotorSettingChange(index)
+    this.enigmaSimulator.simulate("A");
+    this.updateSimulator();
+};
+
+App.prototype.resetAll = function resetAll()
 {
-    var rotorSettingSelector = $("#rotor-setting-" + index);
-    var position = rotorSettingSelector.val();
+    this.enigmaSimulator.setRotorPositions("AAA");
+    this.enigmaSimulator.plugboard = new EnigmaPlugboard("");
+    $("#plugboard-pairs").val("");
+    this.resetMessage();
+};
 
-    App.enigmaSimulator.rotorSet[index].setPosition(position);
-}
-
-function onAppError(message, source, lineno, colno, error)
+$(document).ready(function()
 {
-    var debugText = $("#debugText");
-    App.errorMsg += "<p>Error: " + source + ":" + lineno + " " + message;
-    debugText.html(App.errorMsg);
-}
-
-function main()
-{
-    App.errorMsg = "";
-    window.onerror = onAppError;
-
-    setupRotorDropdown(0);
-    setupRotorDropdown(1);
-    setupRotorDropdown(2);
-
-    var plaintext = $('#plaintext');
-    plaintext.on("input", plaintextUpdate);
-
-    reset();
-}
-
-$(document).ready(function() {
-    main();
+    new App();
 });

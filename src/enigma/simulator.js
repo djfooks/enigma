@@ -5,10 +5,12 @@ function EnigmaSimulator(rotorSet, reflector, plugboard)
     this.reflector = reflector;
     this.plugboard = plugboard;
 
-    this.rotorSetIn = new Array(rotorSet.length);
-    this.rotorSetOut = new Array(rotorSet.length);
-    this.plugboardIn = 0;
-    this.plugboardOut = 0;
+    this.inCode = 0;
+    this.inPlugboard = 0;
+    this.inRotorSet = new Array(rotorSet.length);
+    this.outRotorSet = new Array(rotorSet.length);
+    this.outPlugboard = 0;
+    this.outCode = 0;
 }
 
 EnigmaSimulator.prototype.setRotorPositions = function setRotorPositions(rotorPositions)
@@ -25,8 +27,9 @@ EnigmaSimulator.prototype.simulate = function simulate(letter)
 {
     var rotorSetLength = this.rotorSet.length;
     var currentCode = EnigmaUtils.letterToCode(letter);
+    this.inCode = currentCode;
     currentCode = this.plugboard.forward(currentCode);
-    this.plugboardIn = currentCode;
+    this.inPlugboard = currentCode;
 
     var i;
     var rotor;
@@ -34,18 +37,19 @@ EnigmaSimulator.prototype.simulate = function simulate(letter)
     {
         rotor = this.rotorSet[i];
         currentCode = rotor.forward(currentCode);
-        this.rotorSetIn[i] = currentCode;
+        this.inRotorSet[i] = currentCode;
     }
     currentCode = this.reflector.forward(currentCode);
     for (i = rotorSetLength - 1; i >= 0; i -= 1)
     {
         rotor = this.rotorSet[i];
-        this.rotorSetOut[i] = currentCode;
+        this.outRotorSet[i] = currentCode;
         currentCode = rotor.backward(currentCode);
     }
 
-    this.plugboardOut = currentCode;
+    this.outPlugboard = currentCode;
     currentCode = this.plugboard.forward(currentCode);
+    this.outCode = currentCode;
     return EnigmaUtils.codeToLetter(currentCode);
 };
 
