@@ -141,7 +141,6 @@ App.prototype.reflectorChange = function reflectorChange()
     this.settingsUpdate();
 };
 
-
 App.prototype.plugboardChange = function plugboardChange()
 {
     var plugboardPairs = $("#plugboard-pairs").val();
