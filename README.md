@@ -1,7 +1,5 @@
 # enigma
 Enigma machine simulator - JavaScript
 
-
-Open with
-
-http://htmlpreview.github.io/?https://raw.githubusercontent.com/djfooks/enigma/master/index.html
+Try it here:
+https://cdn.rawgit.com/djfooks/enigma/master/index.html
