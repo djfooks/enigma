@@ -54,3 +54,23 @@ ControllerUtils.highlight = function highlight(str, positions)
     }
     return result + "</span>";
 };
+
+ControllerUtils.randomLetter = function randomLetter()
+{
+    return EnigmaUtils.codeToLetter(Math.floor(Math.random() * 26));
+};
+
+ControllerUtils.shuffle = function shuffle(pack)
+{
+    var j;
+    var x;
+    var i;
+    for (i = pack.length; i > 0; i--)
+    {
+        j = Math.floor(Math.random() * i);
+        x = pack[i - 1];
+        pack[i - 1] = pack[j];
+        pack[j] = x;
+    }
+    return pack;
+};

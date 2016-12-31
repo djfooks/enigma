@@ -52,6 +52,9 @@ EnigmaMachineSettings.reflectors =
     "ETW": "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 };
 
+EnigmaMachineSettings.randomRotors = ["I", "II", "III", "IV", "V"];
+EnigmaMachineSettings.randomReflectors = ["A", "B", "C", "B Thin", "C Thin"];
+
 EnigmaMachineSettings.createRotor = function createRotor(name)
 {
     var settings = EnigmaMachineSettings.rotors[name];
