@@ -25,7 +25,6 @@ EnigmaRotor.prototype.setPosition = function setPosition(letter)
 EnigmaRotor.prototype.update = function update()
 {
     this.position = (this.position + 1) % 26;
-    return (this.position == this.notch);
 };
 
 EnigmaRotor.prototype.forward = function forward(letterCode)

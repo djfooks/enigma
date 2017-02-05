@@ -58,14 +58,15 @@ EnigmaSimulator.prototype.encryptLetter = function encryptLetter(letter)
 
     var i;
     var rotorSetLength = this.rotorSet.length;
-    // TODO double step
+    var moveNext = true;
     for (i = 0; i < rotorSetLength; i += 1)
     {
-        var hitNotch = this.rotorSet[i].update();
-        if (!hitNotch)
+        var rotor = this.rotorSet[i];
+        if (moveNext || (i < rotorSetLength - 1 && (rotor.notch - 1) == rotor.position))
         {
-            break;
+            this.rotorSet[i].update();
         }
+        moveNext = (rotor.notch == rotor.position);
     }
     return this.simulate(letter);
 };
