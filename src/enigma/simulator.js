@@ -55,7 +55,6 @@ EnigmaSimulator.prototype.simulate = function simulate(letter)
 
 EnigmaSimulator.prototype.encryptLetter = function encryptLetter(letter)
 {
-
     var i;
     var rotorSetLength = this.rotorSet.length;
     var moveNext = true;

@@ -24,7 +24,7 @@ ControllerUtils.getOffset = function getOffset(position)
     return "";
 };
 
-ControllerUtils.highlightColors = ["blue", "red"];
+ControllerUtils.highlightColors = ["blue", "red", "green"];
 ControllerUtils.highlight = function highlight(str, positions)
 {
     var result = "<span>";

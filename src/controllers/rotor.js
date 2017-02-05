@@ -67,6 +67,7 @@ RotorController.prototype.update = function update()
         highlights[0] = enigmaSimulator.inRotorSet[index - 1];
         highlights[1] = enigmaSimulator.outRotorSet[index - 1];
     }
+    highlights[2] = (26 + rotor.notch - rotor.position - 1) % 26;
 
     $("#rotor-input-"   + index).html(highlight(ControllerUtils.alphabet, highlights));
     $("#rotor-wiring-"  + index).html(highlight(rotor.getWiringOffset(), highlights));
