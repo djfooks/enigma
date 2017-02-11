@@ -5,7 +5,7 @@ function EnigmaRotor(name, mappingString, notchLetter)
     this.substitution = new Array(26);
     this.inverseSubstitution = new Array(26);
     this.position = 0;
-    this.notch = EnigmaUtils.letterToCode(notchLetter);
+    this.notches = [];
 
     var letter;
     var i;
@@ -15,7 +15,24 @@ function EnigmaRotor(name, mappingString, notchLetter)
         this.substitution[i] = letterCode;
         this.inverseSubstitution[letterCode] = i;
     }
+
+    for (i = 0; i < notchLetter.length; i += 1)
+    {
+        this.notches.push(EnigmaUtils.letterToCode(notchLetter[i]));
+    }
 }
+
+EnigmaRotor.prototype.onNotch = function onNotch(position)
+{
+    for (i = 0; i < this.notches.length; i += 1)
+    {
+        if (this.notches[i] == position)
+        {
+            return true;
+        }
+    }
+    return false;
+};
 
 EnigmaRotor.prototype.setPosition = function setPosition(letter)
 {

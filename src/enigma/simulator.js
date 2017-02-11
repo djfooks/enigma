@@ -61,11 +61,11 @@ EnigmaSimulator.prototype.encryptLetter = function encryptLetter(letter)
     for (i = 0; i < rotorSetLength; i += 1)
     {
         var rotor = this.rotorSet[i];
-        if (moveNext || (i < rotorSetLength - 1 && (rotor.notch - 1) == rotor.position))
+        if (moveNext || (i < rotorSetLength - 1 && rotor.onNotch(rotor.position + 1)))
         {
             this.rotorSet[i].update();
         }
-        moveNext = (rotor.notch == rotor.position);
+        moveNext = rotor.onNotch(rotor.position);
     }
     return this.simulate(letter);
 };
